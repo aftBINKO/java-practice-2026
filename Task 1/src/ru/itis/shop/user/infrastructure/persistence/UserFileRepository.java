@@ -50,7 +50,7 @@ public class UserFileRepository implements UserRepository {
                     // идей нет
                 }
             }
-        } catch (IOException e) {  // тут не уверен, что должно быть так
+        } catch (IOException e) {
             throw new IllegalStateException(e);
         }
         return founded_user;
