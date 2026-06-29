@@ -6,7 +6,7 @@ import ru.itis.shop.user.infrastructure.persistence.UserFileRepository;
 
 public class Main {
     public static void main(String[] args) {
-        UserFileRepository userFileRepository = new UserFileRepository("users.txt");
+        UserFileRepository userFileRepository = new UserFileRepository("user.txt");
         UserDatabaseRepository userDatabaseRepository = new UserDatabaseRepository();
         UserConsoleOperations operations = new UserConsoleOperations(userFileRepository);
 
