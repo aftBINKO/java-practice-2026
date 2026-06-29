@@ -40,6 +40,19 @@ public class UserConsoleOperations {
                 System.out.println("Вы можете войти в приложение");
             }
             break;
+            case "3": {
+                System.out.println("Сейчас будем искать пользователя по ID");
+                System.out.println("Введите id:");
+                String id = scanner.nextLine();
+                User founded_user = userRepository.findById(id);
+                if (founded_user != null) {
+                    System.out.println("Пользователь с ID " + id + " найден: " + founded_user.getEmail());
+                }
+                else {
+                    System.out.println("Пользователь с ID " + id + " не найден");
+                }
+            }
+            break;
             case "0": {
                 System.exit(0);
             }
