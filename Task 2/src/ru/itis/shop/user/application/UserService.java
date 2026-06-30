@@ -33,4 +33,16 @@ public class UserService {
             return userOptional.get();
         } else return null;
     }
+
+    public User findByEmail(String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        if (userOptional.isPresent()) {
+            return userOptional.get();
+        } else return null;
+    }
+
+    public void editDescription(User user, String description) {
+        userRepository.editDescription(user, description);
+    }
 }

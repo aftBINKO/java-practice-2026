@@ -32,6 +32,9 @@ public class UserConsoleOperations {
                 findById();
             }
             break;
+            case "4": {
+                editDescription();
+            }
             case "0": {
                 System.exit(0);
             }
@@ -42,6 +45,7 @@ public class UserConsoleOperations {
         System.out.println("1. Регистрация пользователя");
         System.out.println("2. Вход в систему");
         System.out.println("3. Найти пользователя по id");
+        System.out.println("4. Обновить описание профиля");
         System.out.println("0. Выход");
     }
 
@@ -57,20 +61,6 @@ public class UserConsoleOperations {
         userService.signUp(email, password, profileDescription);
     }
 
-    private void findById() {
-        System.out.println("Сейчас будем искать пользователя по ID");
-        System.out.println("Введите id:");
-        String id = scanner.nextLine();
-
-        User founded_user = userService.findById(id);
-        if (founded_user != null) {
-            System.out.println("Пользователь с ID " + id + " найден: " + founded_user.getEmail());
-        } else {
-            System.out.println("Пользователь с ID " + id + " не найден");
-        }
-    }
-
-
     private void signIn() {
         System.out.println("Вы можете войти в приложение");
         System.out.println("Введите email:");
@@ -84,4 +74,33 @@ public class UserConsoleOperations {
             System.out.println("Email или пароль не верны");
         }
     }
+
+    private void findById() {
+        System.out.println("Сейчас будем искать пользователя по ID");
+        System.out.println("Введите id:");
+        String id = scanner.nextLine();
+
+        User founded_user = userService.findById(id);
+        if (founded_user != null) {
+            System.out.println("Пользователь с ID " + id + " найден: " + founded_user.getEmail());
+        } else {
+            System.out.println("Пользователь с ID " + id + " не найден");
+        }
+    }
+
+    private void editDescription() {
+        System.out.println("Вы можете отредактировать описание профиля по email");
+        System.out.println("Введите email:");
+        String email = scanner.nextLine();
+
+        User founded_user = userService.findByEmail(email);
+        if (founded_user != null) {
+            System.out.println("Введите новое описание:");
+            String description = scanner.nextLine();
+            userService.editDescription(founded_user, description);
+        } else {
+            System.out.println("Пользователь с почтой " + email + " не найден");
+        }
+    }
+
 }
