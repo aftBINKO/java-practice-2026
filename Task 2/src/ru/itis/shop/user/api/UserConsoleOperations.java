@@ -1,6 +1,7 @@
 package ru.itis.shop.user.api;
 
 import ru.itis.shop.user.application.UserService;
+import ru.itis.shop.user.domain.User;
 
 import java.util.Scanner;
 
@@ -26,6 +27,9 @@ public class UserConsoleOperations {
             break;
             case "2": {
                 signIn();
+            }
+            case "3": {
+                findById();
             }
             break;
             case "0": {
@@ -53,6 +57,19 @@ public class UserConsoleOperations {
         userService.signUp(email, password, profileDescription);
     }
 
+    private void findById() {
+        System.out.println("Сейчас будем искать пользователя по ID");
+        System.out.println("Введите id:");
+        String id = scanner.nextLine();
+
+        User founded_user = userService.findById(id);
+        if (founded_user != null) {
+            System.out.println("Пользователь с ID " + id + " найден: " + founded_user.getEmail());
+        } else {
+            System.out.println("Пользователь с ID " + id + " не найден");
+        }
+    }
+
 
     private void signIn() {
         System.out.println("Вы можете войти в приложение");
@@ -67,7 +84,4 @@ public class UserConsoleOperations {
             System.out.println("Email или пароль не верны");
         }
     }
-
-
-
 }

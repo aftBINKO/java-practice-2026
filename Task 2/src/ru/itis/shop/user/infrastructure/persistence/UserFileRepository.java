@@ -4,6 +4,7 @@ import ru.itis.shop.user.domain.User;
 import ru.itis.shop.user.repository.UserRepository;
 
 import java.io.*;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -56,6 +57,25 @@ public class UserFileRepository implements UserRepository {
 
     @Override
     public Optional<User> findById(String id) {
-        return Optional.empty();
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))){
+
+            String line = reader.readLine();
+
+            while (line != null) {
+
+                User user = userMapper.fromLine(line);
+
+                if (user.getId().equals(id)) {
+                    return Optional.of(user);
+                }
+
+                line = reader.readLine();
+            }
+
+            return Optional.empty();
+
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }
