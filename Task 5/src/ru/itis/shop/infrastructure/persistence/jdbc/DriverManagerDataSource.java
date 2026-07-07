@@ -35,7 +35,7 @@ public class DriverManagerDataSource implements DataSource {
         try {
             connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
         } catch (SQLException e) {
-            throw new RuntimeException();
+            throw new RuntimeException(e);
         }
     }
 
