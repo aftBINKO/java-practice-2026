@@ -4,6 +4,8 @@ import ru.itis.shop.user.api.dto.UserDto;
 import ru.itis.shop.user.application.UserService;
 import ru.itis.shop.user.domain.User;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class UserConsoleOperations {
@@ -29,6 +31,21 @@ public class UserConsoleOperations {
             case "2": {
                 signIn();
             }
+            case "3": {
+                findById();
+            }
+            break;
+            case "4": {
+                editDescription();
+            }
+            break;
+            case "5": {
+                findAll();
+            }
+            break;
+            case "6": {
+                findByProfileDescription();
+            }
             break;
             case "7": {
                 String email = scanner.nextLine();
@@ -49,7 +66,6 @@ public class UserConsoleOperations {
         System.out.println("4. Обновить описание пользователя по почте");
         System.out.println("5. Получить информацию обо всех пользователях");
         System.out.println("6. Показать информацию о пользователях с заданным описанием профиля");
-        System.out.println("7. Показать информацию о пользователя по email");
         System.out.println("0. Выход");
     }
 
@@ -82,6 +98,61 @@ public class UserConsoleOperations {
         }
     }
 
+    private void findById() {
+        System.out.println("Сейчас будем искать пользователя по ID");
+        System.out.println("Введите id:");
+        Integer id = Integer.valueOf(scanner.nextLine());
 
+        Optional<UserDto> userOptional = userService.findById(id);
+
+        if (userOptional.isPresent()) {
+            UserDto founded_user = userOptional.get();
+            System.out.println("Пользователь с ID " + id + " найден: " + founded_user.getEmail());
+        } else {
+            System.out.println("Пользователь с ID " + id + " не найден");
+        }
+    }
+
+    private void editDescription() {
+        System.out.println("Вы можете отредактировать описание профиля по email");
+        System.out.println("Введите email:");
+        String email = scanner.nextLine();
+
+        Optional<UserDto> userOptional = userService.findByEmail(email);
+
+        if (userOptional.isPresent()) {
+            UserDto founded_user = userOptional.get();
+            System.out.println("Введите новое описание:");
+            String description = scanner.nextLine();
+            userService.editDescription(founded_user, description);
+        } else {
+            System.out.println("Пользователь с почтой " + email + " не найден");
+        }
+    }
+
+    private void findByProfileDescription() {
+        System.out.println("Введите описание профиля для поиска:");
+        String description = scanner.nextLine();
+
+        List<User> users = userService.findAllByProfileDescription(description);
+
+        if (users.isEmpty()) {
+            System.out.println("Пользователи с описанием '" + description + "' не найдены.");
+        } else {
+            System.out.println("Найденные пользователи:");
+            for (User user : users) {
+                System.out.println(user.getName() + " " + user.getEmail());
+            }
+        }
+    }
+
+    private void findAll() {
+        System.out.println("Пользователи:");
+        List<User> users = userService.findAll();
+
+        for (User user : users) {
+            System.out.println(user.getName() + " | " + user.getEmail());
+        }
+    }
 
 }

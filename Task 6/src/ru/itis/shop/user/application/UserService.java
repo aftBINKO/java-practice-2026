@@ -4,6 +4,7 @@ import ru.itis.shop.user.api.dto.UserDto;
 import ru.itis.shop.user.domain.User;
 import ru.itis.shop.user.repository.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public class UserService {
@@ -32,4 +33,39 @@ public class UserService {
             return userOptional.get().getPassword().equals(password);
         } else return false;
     }
+
+    public Optional<UserDto> findById(Integer id) {
+        Optional<User> userOptional = userRepository.findById(id);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            return Optional.of(new UserDto(user.getId(), user.getEmail(), user.getProfileDescription()));
+        }
+
+        return Optional.empty();
+    }
+
+    public Optional<UserDto> findByEmail(String email) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            return Optional.of(new UserDto(user.getId(), user.getEmail(), user.getProfileDescription()));
+        }
+
+        return Optional.empty();
+    }
+
+    public void editDescription(UserDto user, String description) {
+        userRepository.editDescription(user, description);
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    public List<User> findAllByProfileDescription(String description) {
+        return userRepository.findAllByProfileDescription(description);
+    }
 }
+

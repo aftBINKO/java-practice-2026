@@ -1,15 +1,13 @@
 package ru.itis.shop.user.infrastructure.persistence.jdbc;
 
 import ru.itis.shop.infrastructure.persistence.jdbc.RowMapper;
+import ru.itis.shop.user.api.dto.UserDto;
 import ru.itis.shop.user.domain.User;
 import ru.itis.shop.user.repository.UserRepository;
 
 import javax.sql.ConnectionEvent;
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +21,7 @@ public class UserRepositoryJdbcImpl implements UserRepository {
             row.getString("name"),
             row.getString("email"),
             row.getString("password"),
-            row.getString("profileDescription")
+            row.getString("profile_description")
     );
 
     public UserRepositoryJdbcImpl(DataSource dataSource) {
@@ -32,16 +30,61 @@ public class UserRepositoryJdbcImpl implements UserRepository {
 
     @Override
     public void save(User user) {
+        String sql = "INSERT INTO account (name, email, password, profile_description) VALUES (?, ?, ?, ?)";
 
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, user.getName());
+            statement.setString(2, user.getEmail());
+            statement.setString(3, user.getPassword());
+            statement.setString(4, user.getProfileDescription());
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     @Override
     public Optional<User> findByEmail(String email) {
+        String sql = "SELECT * FROM account WHERE email = ?";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, email);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return Optional.of(userRowMapper.mapRow(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException(e);
+        }
+
         return Optional.empty();
     }
 
     @Override
     public Optional<User> findById(Integer id) {
+        String sql = "SELECT * FROM account WHERE id = ?";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setInt(1, id);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return Optional.of(userRowMapper.mapRow(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException(e);
+        }
+
         return Optional.empty();
     }
 
@@ -60,5 +103,42 @@ public class UserRepositoryJdbcImpl implements UserRepository {
             throw new IllegalStateException(e);
         }
         return users;
+    }
+
+    @Override
+    public List<User> findAllByProfileDescription(String profileDescription) {
+        String sql = "SELECT * FROM account WHERE profile_description = ?";
+        List<User> users = new ArrayList<>();
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, profileDescription);
+
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    users.add(userRowMapper.mapRow(resultSet));
+                }
+            }
+        } catch (SQLException e) {
+            throw new IllegalStateException(e);
+        }
+        return users;
+    }
+
+    @Override
+    public void editDescription(UserDto user, String description) {
+        String sql = "UPDATE account SET profile_description = ? WHERE email = ?";
+
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql)) {
+
+            statement.setString(1, description);
+            statement.setString(2, user.getEmail());
+
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            throw new IllegalStateException(e);
+        }
     }
 }

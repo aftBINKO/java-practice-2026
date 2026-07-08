@@ -1,5 +1,6 @@
 package ru.itis.shop.user.repository;
 
+import ru.itis.shop.user.api.dto.UserDto;
 import ru.itis.shop.user.domain.User;
 
 import java.util.List;
@@ -14,4 +15,8 @@ public interface UserRepository {
     Optional<User> findById(Integer id);
 
     List<User> findAll();
+
+    List<User> findAllByProfileDescription(String profileDescription);
+
+    void editDescription(UserDto user, String description);
 }
